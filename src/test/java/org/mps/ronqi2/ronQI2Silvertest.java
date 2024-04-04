@@ -1,9 +1,21 @@
 package org.mps.ronqi2;
 
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ronQI2Silvertest {
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Nested;
 
-    
+
+public class ronQI2SilverTest {
+
+    @Test
+    public void inicializar_ConectarSesorPresionEsFalse_ReturnFalse(){
+        RonQI2Silver r = new RonQI2Silver();
+
+        boolean res = r.inicializar();
+
+        assertFalse(res);
+    }
     /*
      * Analiza con los caminos base qué pruebas se han de realizar para comprobar que al inicializar funciona como debe ser. 
      * El funcionamiento correcto es que si es posible conectar ambos sensores y configurarlos, 
