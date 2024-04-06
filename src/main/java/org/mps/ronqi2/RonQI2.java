@@ -11,7 +11,11 @@ public abstract class RonQI2 {
      * Inicializa el sistema ronQI2 configurando los dos sensores del dispositivo conectado.
     */
     public boolean inicializar(){
-        disp = new DispositivoSilver();
+
+        // ERROR CORREGIDO: No se creaba una instancia si disp es null
+        if(disp == null){
+            disp = new DispositivoSilver();
+        }
         boolean result = false;
         if (disp.conectarSensorPresion()){
             boolean confPresion = disp.configurarSensorPresion();
