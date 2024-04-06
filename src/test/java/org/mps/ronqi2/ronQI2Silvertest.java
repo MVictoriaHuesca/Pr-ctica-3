@@ -4,10 +4,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mps.dispositivo.Dispositivo;
 import org.mps.dispositivo.DispositivoSilver;
 
 import static org.mockito.Mockito.*;
+
+import java.util.List;
 
 
 // mvn jacoco:prepare-agent test install jacoco:report
@@ -104,40 +108,6 @@ public class ronQI2SilverTest {
             assertTrue(res);
         }
     }
-    /*@DisplayName("Tests para la clase RonQI2Silver")
-    @Nested
-    class obtenerNuevaLecturaTest{
-        @Test
-        public void obtenerNuevaLectura_LasLecturasSonMenoresQueNumLecturas_ReturnTrue(){
-            RonQI2Silver ronQI2 = new RonQI2Silver();
-            DispositivoSilver dispMock = mock(DispositivoSilver.class);
-            when(dispMock.leerSensorPresion()).thenReturn(1.0f);
-            when(dispMock.leerSensorSonido()).thenReturn(1.0f);
-            ronQI2.anyadirDispositivo(dispMock);
-
-            ronQI2.obtenerNuevaLectura();
-
-            assertEquals(1, ronQI2.lecturasP.size());
-            assertEquals(1, ronQI2.lecturasS.size());
-        }
-
-        @Test
-        public void obtenerNuevaLectura_LasLecturasSonMayoresQueNumLecturas_ReturnTrue(){
-            RonQI2Silver ronQI2 = new RonQI2Silver();
-            DispositivoSilver dispMock = mock(DispositivoSilver.class);
-            when(dispMock.leerSensorPresion()).thenReturn(1.0f);
-            when(dispMock.leerSensorSonido()).thenReturn(1.0f);
-            ronQI2.anyadirDispositivo(dispMock);
-
-            for(int i = 0; i < 6; i++){
-                ronQI2.obtenerNuevaLectura();
-            }
-
-            assertEquals(5, ronQI2.lecturasP.size());
-            assertEquals(5, ronQI2.lecturasS.size());
-        }
-    }*/
-
     
 
     /*
@@ -205,29 +175,67 @@ public class ronQI2SilverTest {
         
     }
 
-    @Test
-    public void estaConectado_ReturnFalse(){
-        RonQI2Silver ronQI2 = new RonQI2Silver();
-        DispositivoSilver dispMock = mock(DispositivoSilver.class);
-        when(dispMock.estaConectado()).thenReturn(false);
-        ronQI2.anyadirDispositivo(dispMock);
+    @Nested
+    @DisplayName("Tests para el método estaConectado")
+    public class estaConectado {
+        @Test
+        public void estaConectado_ReturnFalse(){
+            RonQI2Silver ronQI2 = new RonQI2Silver();
+            DispositivoSilver dispMock = mock(DispositivoSilver.class);
+            when(dispMock.estaConectado()).thenReturn(false);
+            ronQI2.anyadirDispositivo(dispMock);
 
-        boolean res = ronQI2.estaConectado();
+            boolean res = ronQI2.estaConectado();
 
-        assertFalse(res);
+            assertFalse(res);
+        }
+
+        @Test
+        public void estaConectado_ReturnTrue(){
+            RonQI2Silver ronQI2 = new RonQI2Silver();
+            DispositivoSilver dispMock = mock(DispositivoSilver.class);
+            when(dispMock.estaConectado()).thenReturn(true);
+            ronQI2.anyadirDispositivo(dispMock);
+
+            boolean res = ronQI2.estaConectado();
+
+            assertTrue(res);
+        }
+        
     }
 
-    @Test
-    public void estaConectado_ReturnTrue(){
-        RonQI2Silver ronQI2 = new RonQI2Silver();
-        DispositivoSilver dispMock = mock(DispositivoSilver.class);
-        when(dispMock.estaConectado()).thenReturn(true);
-        ronQI2.anyadirDispositivo(dispMock);
 
-        boolean res = ronQI2.estaConectado();
+    @Nested
+    @DisplayName("Tests para el método obtenerNuevaLectura")
+    public class obtenerNuevaLecturaTest {
+        @Test
+        public void obtenerNuevaLectura_LasLecturasSonMenoresQueNumLecturas(){
+            RonQI2Silver ronQI2 = new RonQI2Silver();
+            DispositivoSilver dispMock = mock(DispositivoSilver.class);
+            ronQI2.anyadirDispositivo(dispMock);
 
-        assertTrue(res);
+            ronQI2.obtenerNuevaLectura();
+
+            verify(dispMock, times(1)).leerSensorPresion();
+            verify(dispMock, times(1)).leerSensorSonido();
+        }
+
+        @Test
+        public void obtenerNuevaLectura_LasLecturasSonMayoresQueNumLecturas(){
+            RonQI2Silver ronQI2 = new RonQI2Silver();
+            DispositivoSilver dispMock = mock(DispositivoSilver.class);
+            ronQI2.anyadirDispositivo(dispMock);
+
+            for(int i = 0; i < 6; i++){
+                ronQI2.obtenerNuevaLectura();
+            }
+
+            verify(dispMock, times(6)).leerSensorPresion();
+            verify(dispMock, times(6)).leerSensorSonido();
+        }
+        
     }
+    
     
     
     /*
@@ -240,4 +248,83 @@ public class ronQI2SilverTest {
      * Usa el ParameterizedTest para realizar un número de lecturas previas a calcular si hay apnea o no (por ejemplo 4, 5 y 10 lecturas).
      * https://junit.org/junit5/docs/current/user-guide/index.html#writing-tests-parameterized-tests
      */
+
+    @Nested
+    @DisplayName("Tests para el método evaluarApneaSuenyo")
+    public class evaluarApneaSuenyoTest {
+        @ParameterizedTest
+        @ValueSource(ints = {1, 5, 10})
+        public void evaluarApneaSuenyo_LasLecturasSonMenoresQueNumLecturas(int numLecturas){
+            RonQI2Silver ronQI2 = new RonQI2Silver();
+            DispositivoSilver dispMock = mock(DispositivoSilver.class);
+            when(dispMock.leerSensorPresion()).thenReturn(10.0f);
+            when(dispMock.leerSensorSonido()).thenReturn(15.0f);
+            ronQI2.anyadirDispositivo(dispMock);
+
+            for(int i = 0; i < numLecturas; i++){
+                ronQI2.obtenerNuevaLectura();
+            }
+
+            boolean res = ronQI2.evaluarApneaSuenyo();
+
+            assertTrue(res);
+        }
+
+        @ParameterizedTest
+        @ValueSource(ints = {1, 5, 10})
+        public void evaluarApneaSuenyo_LasLecturasSonMayoresQueNumLecturas(int numLecturas){
+            RonQI2Silver ronQI2 = new RonQI2Silver();
+            DispositivoSilver dispMock = mock(DispositivoSilver.class);
+            when(dispMock.leerSensorPresion()).thenReturn(20.0f);
+            when(dispMock.leerSensorSonido()).thenReturn(31.0f);
+            ronQI2.anyadirDispositivo(dispMock);
+            
+            for(int i = 0; i < numLecturas; i++){
+                ronQI2.obtenerNuevaLectura();
+            }
+
+            boolean res = ronQI2.evaluarApneaSuenyo();
+
+            assertFalse(res);
+        }
+
+        @ParameterizedTest
+        @ValueSource(ints = {1, 5, 10})
+        public void evaluarApneaSuenyo_avgPresionEsMenorQueTresholdPresionPeroavgSonidoEsMayorQueThresholdSonido(int numLecturas){
+            RonQI2Silver ronQI2 = new RonQI2Silver();
+            DispositivoSilver dispMock = mock(DispositivoSilver.class);
+            when(dispMock.leerSensorPresion()).thenReturn(19.0f);
+            when(dispMock.leerSensorSonido()).thenReturn(31.0f);
+            ronQI2.anyadirDispositivo(dispMock);
+            
+            for(int i = 0; i < numLecturas; i++){
+                ronQI2.obtenerNuevaLectura();
+            }
+
+            boolean res = ronQI2.evaluarApneaSuenyo();
+
+            assertTrue(res);
+        }
+
+        @ParameterizedTest
+        @ValueSource(ints = {1, 5, 10})
+        public void evaluarApneaSuenyo_avgSonidoEsMenorQueTresholdSonidoPeroavgPresionEsMayorQueThresholdPresion(int numLecturas){
+            RonQI2Silver ronQI2 = new RonQI2Silver();
+            DispositivoSilver dispMock = mock(DispositivoSilver.class);
+            when(dispMock.leerSensorPresion()).thenReturn(21.0f);
+            when(dispMock.leerSensorSonido()).thenReturn(29.0f);
+            ronQI2.anyadirDispositivo(dispMock);
+            
+            for(int i = 0; i < numLecturas; i++){
+                ronQI2.obtenerNuevaLectura();
+            }
+
+            boolean res = ronQI2.evaluarApneaSuenyo();
+
+            assertTrue(res);
+        }
+        
+    }
+    
+
 }
