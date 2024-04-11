@@ -1,7 +1,6 @@
 package org.mps.ronqi2;
 
 import org.mps.dispositivo.Dispositivo;
-import org.mps.dispositivo.*;
 
 public abstract class RonQI2 {
     protected Dispositivo disp;
