@@ -10,6 +10,7 @@ public class RonQI2Silver extends RonQI2{
     private List<Float> lecturasS;
     private float thresholdP;
     private float thresholdS;
+    
     public RonQI2Silver() {
         lecturasP = new ArrayList<Float>();
         lecturasS = new ArrayList<Float>();
