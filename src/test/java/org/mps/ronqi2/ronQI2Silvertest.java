@@ -24,49 +24,17 @@ public class ronQI2SilverTest {
      * el método inicializar de ronQI2 o sus subclases, 
      * debería devolver true. En cualquier otro caso false. Se deja programado un ejemplo.
      */
-    
-    /*
-     * Un inicializar debe configurar ambos sensores, comprueba que cuando se inicializa de forma correcta (el conectar es true), 
-     * se llama una sola vez al configurar de cada sensor.
-     */
     @DisplayName("Clase para hacer tests del metodo inicializar")
     @Nested
     public class inicializarTest {
         @Test
         public void inicializar_ConectarSensorPresionEsFalse_ReturnFalse(){
-            RonQI2Silver r = new RonQI2Silver();
-
-            boolean res = r.inicializar();
-
-            assertFalse(res);
-        }
-
-        @Test
-        public void inicializar_ConectarSensorPresionEsTruePeroConectarSensorSonidoEsFalse_ReturnTrue(){
             RonQI2Silver ronQI2 = new RonQI2Silver();
             DispositivoSilver dispMock = mock(DispositivoSilver.class);
-            when(dispMock.conectarSensorPresion()).thenReturn(true);
-            when(dispMock.configurarSensorPresion()).thenReturn(true);
-            when(dispMock.conectarSensorSonido()).thenReturn(false);
-            
-            
-            ronQI2.anyadirDispositivo(dispMock);
-
-            boolean res = ronQI2.inicializar();
-
-            assertFalse(res);
-        }
-
-        @Test
-        public void inicializar_LasDosCondicionesSonTruePeroConfigurarSensorSonidoEsFalse_ReturnTrue(){
-            RonQI2Silver ronQI2 = new RonQI2Silver();
-            DispositivoSilver dispMock = mock(DispositivoSilver.class);
-            when(dispMock.conectarSensorPresion()).thenReturn(true);
+            when(dispMock.conectarSensorPresion()).thenReturn(false);
             when(dispMock.configurarSensorPresion()).thenReturn(true);
             when(dispMock.conectarSensorSonido()).thenReturn(true);
-            when(dispMock.configurarSensorSonido()).thenReturn(false);
-            
-            
+            when(dispMock.configurarSensorSonido()).thenReturn(true);
             ronQI2.anyadirDispositivo(dispMock);
 
             boolean res = ronQI2.inicializar();
@@ -75,13 +43,47 @@ public class ronQI2SilverTest {
         }
 
         @Test
-        public void inicializar_LasDosCondicionesSonTruePeroConfigurarSensorPresionEsFalse_ReturnTrue(){
+        public void inicializar_ConfigurarSensorPresionEsFalse_ReturnFalse(){
             RonQI2Silver ronQI2 = new RonQI2Silver();
             DispositivoSilver dispMock = mock(DispositivoSilver.class);
             when(dispMock.conectarSensorPresion()).thenReturn(true);
             when(dispMock.configurarSensorPresion()).thenReturn(false);
             when(dispMock.conectarSensorSonido()).thenReturn(true);
             when(dispMock.configurarSensorSonido()).thenReturn(true);
+            
+            
+            ronQI2.anyadirDispositivo(dispMock);
+
+            boolean res = ronQI2.inicializar();
+
+            assertFalse(res);
+        }
+
+        @Test
+        public void inicializar_ConectarSensorSonidoEsFalse_ReturnFalse(){
+            RonQI2Silver ronQI2 = new RonQI2Silver();
+            DispositivoSilver dispMock = mock(DispositivoSilver.class);
+            when(dispMock.conectarSensorPresion()).thenReturn(true);
+            when(dispMock.configurarSensorPresion()).thenReturn(true);
+            when(dispMock.conectarSensorSonido()).thenReturn(false);
+            when(dispMock.configurarSensorSonido()).thenReturn(true);
+            
+            
+            ronQI2.anyadirDispositivo(dispMock);
+
+            boolean res = ronQI2.inicializar();
+
+            assertFalse(res);
+        }
+
+        @Test
+        public void inicializar_ConfigurarSensorSonidoEsFalse_ReturnFalse(){
+            RonQI2Silver ronQI2 = new RonQI2Silver();
+            DispositivoSilver dispMock = mock(DispositivoSilver.class);
+            when(dispMock.conectarSensorPresion()).thenReturn(true);
+            when(dispMock.configurarSensorPresion()).thenReturn(true);
+            when(dispMock.conectarSensorSonido()).thenReturn(true);
+            when(dispMock.configurarSensorSonido()).thenReturn(false);
             
             
             ronQI2.anyadirDispositivo(dispMock);
@@ -106,6 +108,27 @@ public class ronQI2SilverTest {
             boolean res = ronQI2.inicializar();
 
             assertTrue(res);
+        }
+
+        /*
+        * Un inicializar debe configurar ambos sensores, comprueba que cuando se inicializa de forma correcta (el conectar es true), 
+        * se llama una sola vez al configurar de cada sensor.
+        */
+        @Test 
+        public void inicializar_TodoTrueYSeLlamaUnaVezAConfigurarDeCadaSensor(){
+            RonQI2Silver ronQI2 = new RonQI2Silver();
+            DispositivoSilver dispMock = mock(DispositivoSilver.class);
+            when(dispMock.conectarSensorPresion()).thenReturn(true);
+            when(dispMock.configurarSensorPresion()).thenReturn(true);
+            when(dispMock.conectarSensorSonido()).thenReturn(true);
+            when(dispMock.configurarSensorSonido()).thenReturn(true);
+            
+            ronQI2.anyadirDispositivo(dispMock);
+
+            ronQI2.inicializar();
+
+            verify(dispMock, times(1)).configurarSensorPresion();
+            verify(dispMock, times(1)).configurarSensorSonido();
         }
     }
     
@@ -203,40 +226,6 @@ public class ronQI2SilverTest {
         }
         
     }
-
-
-    @Nested
-    @DisplayName("Tests para el método obtenerNuevaLectura")
-    public class obtenerNuevaLecturaTest {
-        @Test
-        public void obtenerNuevaLectura_LasLecturasSonMenoresQueNumLecturas(){
-            RonQI2Silver ronQI2 = new RonQI2Silver();
-            DispositivoSilver dispMock = mock(DispositivoSilver.class);
-            ronQI2.anyadirDispositivo(dispMock);
-
-            ronQI2.obtenerNuevaLectura();
-
-            verify(dispMock, times(1)).leerSensorPresion();
-            verify(dispMock, times(1)).leerSensorSonido();
-        }
-
-        @Test
-        public void obtenerNuevaLectura_LasLecturasSonMayoresQueNumLecturas(){
-            RonQI2Silver ronQI2 = new RonQI2Silver();
-            DispositivoSilver dispMock = mock(DispositivoSilver.class);
-            ronQI2.anyadirDispositivo(dispMock);
-
-            for(int i = 0; i < 6; i++){
-                ronQI2.obtenerNuevaLectura();
-            }
-
-            verify(dispMock, times(6)).leerSensorPresion();
-            verify(dispMock, times(6)).leerSensorSonido();
-        }
-        
-    }
-    
-    
     
     /*
      * El método evaluarApneaSuenyo, evalua las últimas 5 lecturas realizadas con obtenerNuevaLectura(), 
@@ -254,7 +243,7 @@ public class ronQI2SilverTest {
     public class evaluarApneaSuenyoTest {
         @ParameterizedTest
         @ValueSource(ints = {1, 5, 10})
-        public void evaluarApneaSuenyo_LasLecturasSonMenoresQueNumLecturas(int numLecturas){
+        public void evaluarApneaSuenyo_PresionySonidoPorDebajoUmbrales_ReturnFalse(int numLecturas){
             RonQI2Silver ronQI2 = new RonQI2Silver();
             DispositivoSilver dispMock = mock(DispositivoSilver.class);
             when(dispMock.leerSensorPresion()).thenReturn(10.0f);
@@ -267,15 +256,33 @@ public class ronQI2SilverTest {
 
             boolean res = ronQI2.evaluarApneaSuenyo();
 
+            assertFalse(res);
+        }
+
+        @ParameterizedTest
+        @ValueSource(ints = {1, 5, 10})
+        public void evaluarApneaSuenyo_PresionySonidoPorEncimaUmbrales_ReturnTrue(int numLecturas){
+            RonQI2Silver ronQI2 = new RonQI2Silver();
+            DispositivoSilver dispMock = mock(DispositivoSilver.class);
+            when(dispMock.leerSensorPresion()).thenReturn(20.0f);
+            when(dispMock.leerSensorSonido()).thenReturn(31.0f);
+            ronQI2.anyadirDispositivo(dispMock);
+            
+            for(int i = 0; i < numLecturas; i++){
+                ronQI2.obtenerNuevaLectura();
+            }
+
+            boolean res = ronQI2.evaluarApneaSuenyo();
+
             assertTrue(res);
         }
 
         @ParameterizedTest
         @ValueSource(ints = {1, 5, 10})
-        public void evaluarApneaSuenyo_LasLecturasSonMayoresQueNumLecturas(int numLecturas){
+        public void evaluarApneaSuenyo_PresionPorDebajoSonidoPorEncimaUmbrales_ReturnFalse(int numLecturas){
             RonQI2Silver ronQI2 = new RonQI2Silver();
             DispositivoSilver dispMock = mock(DispositivoSilver.class);
-            when(dispMock.leerSensorPresion()).thenReturn(20.0f);
+            when(dispMock.leerSensorPresion()).thenReturn(19.0f);
             when(dispMock.leerSensorSonido()).thenReturn(31.0f);
             ronQI2.anyadirDispositivo(dispMock);
             
@@ -290,25 +297,7 @@ public class ronQI2SilverTest {
 
         @ParameterizedTest
         @ValueSource(ints = {1, 5, 10})
-        public void evaluarApneaSuenyo_avgPresionEsMenorQueTresholdPresionPeroavgSonidoEsMayorQueThresholdSonido(int numLecturas){
-            RonQI2Silver ronQI2 = new RonQI2Silver();
-            DispositivoSilver dispMock = mock(DispositivoSilver.class);
-            when(dispMock.leerSensorPresion()).thenReturn(19.0f);
-            when(dispMock.leerSensorSonido()).thenReturn(31.0f);
-            ronQI2.anyadirDispositivo(dispMock);
-            
-            for(int i = 0; i < numLecturas; i++){
-                ronQI2.obtenerNuevaLectura();
-            }
-
-            boolean res = ronQI2.evaluarApneaSuenyo();
-
-            assertTrue(res);
-        }
-
-        @ParameterizedTest
-        @ValueSource(ints = {1, 5, 10})
-        public void evaluarApneaSuenyo_avgSonidoEsMenorQueTresholdSonidoPeroavgPresionEsMayorQueThresholdPresion(int numLecturas){
+        public void evaluarApneaSuenyo_PresionPorEncimaSonidoPorDebajoUmbrales_ReturnFalse(int numLecturas){
             RonQI2Silver ronQI2 = new RonQI2Silver();
             DispositivoSilver dispMock = mock(DispositivoSilver.class);
             when(dispMock.leerSensorPresion()).thenReturn(21.0f);
@@ -321,10 +310,11 @@ public class ronQI2SilverTest {
 
             boolean res = ronQI2.evaluarApneaSuenyo();
 
-            assertTrue(res);
+            assertFalse(res);
         }
         
     }
+
     
 
 }

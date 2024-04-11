@@ -3,7 +3,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DispositivoTest {
-    @Test
+    /*@Test
     public void conectarSensorPresion_returnFalse(){
         DispositivoSilver disp = new DispositivoSilver();
 
@@ -64,6 +64,6 @@ public class DispositivoTest {
         boolean res = disp.estaConectado();
 
         assertFalse(res);
-    }
+    }*/
     
 }

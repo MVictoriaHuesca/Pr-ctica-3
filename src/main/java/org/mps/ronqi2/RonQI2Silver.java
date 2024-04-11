@@ -27,6 +27,8 @@ public class RonQI2Silver extends RonQI2{
         if(lecturasP.size()>numLecturas){
             lecturasP.remove(0); 
         }
+
+        //Error Corregido: tiene que llamar a leerSensorSonido() en lugar de leerSensorPresion()
         lecturasS.add(disp.leerSensorSonido());
         if(lecturasS.size()>numLecturas){
             lecturasS.remove(0); 
@@ -50,12 +52,19 @@ public class RonQI2Silver extends RonQI2{
                 .mapToDouble(d -> d)
                 .average()
                 .orElse(0.0);
+                
         
-        if (avgP>=thresholdP && avgS > thresholdS){
-            resultado = false;
+
+        // ERROR Corregido: en el comentario de ronQI2SilverTest.java dice que
+        // "si ambos sensores superan o son iguales a sus umbrales se considera que 
+        // hay una apnea en proceso" por lo que se cambio el operador de > a >=
+        if (avgP >= thresholdP && avgS >= thresholdS){
+            resultado = true;// ERROR Corregido: en el comentario encima dice
+                             // "Devuelve true si el promedio de las lecturas de presion es mayor"
         }   
         else{
-            resultado = true;
+            resultado = false;// ERROR Corregido: en el comentario encima dice
+                              // "False en otro caso"
         }
         return resultado;
     }

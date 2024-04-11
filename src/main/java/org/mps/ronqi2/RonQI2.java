@@ -12,10 +12,6 @@ public abstract class RonQI2 {
     */
     public boolean inicializar(){
 
-        // ERROR CORREGIDO: No se creaba una instancia si disp es null
-        if(disp == null){
-            disp = new DispositivoSilver();
-        }
         boolean result = false;
         if (disp.conectarSensorPresion()){
             boolean confPresion = disp.configurarSensorPresion();
